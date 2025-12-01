@@ -1,0 +1,16 @@
+_id,email,passwordHash,role,doctorId,patientId,staffId,createdAt,updatedAt
+U001,user1@test.com,hashed_password123,doctor,D001,,,2025-02-01T10:00:00Z,2025-02-01T10:00:00Z
+U002,user2@test.com,hashed_password123,patient,,P002,,2025-02-01T10:01:00Z,2025-02-01T10:01:00Z
+U003,user3@test.com,hashed_password123,staff,,,S003,2025-02-01T10:02:00Z,2025-02-01T10:02:00Z
+U004,user4@test.com,hashed_password123,doctor,D004,,,2025-02-01T10:03:00Z,2025-02-01T10:03:00Z
+U005,user5@test.com,hashed_password123,patient,,P005,,2025-02-01T10:04:00Z,2025-02-01T10:04:00Z
+U006,user6@test.com,hashed_password123,staff,,,S006,2025-02-01T10:05:00Z,2025-02-01T10:05:00Z
+U007,user7@test.com,hashed_password123,doctor,D007,,,2025-02-01T10:06:00Z,2025-02-01T10:06:00Z
+U008,user8@test.com,hashed_password123,patient,,P008,,2025-02-01T10:07:00Z,2025-02-01T10:07:00Z
+U009,user9@test.com,hashed_password123,staff,,,S009,2025-02-01T10:08:00Z,2025-02-01T10:08:00Z
+U010,user10@test.com,hashed_password123,doctor,D010,,,2025-02-01T10:09:00Z,2025-02-01T10:09:00Z
+U011,user11@test.com,hashed_password123,patient,,P011,,2025-02-01T10:10:00Z,2025-02-01T10:10:00Z
+U012,user12@test.com,hashed_password123,staff,,,S012,2025-02-01T10:11:00Z,2025-02-01T10:11:00Z
+U013,user13@test.com,hashed_password123,doctor,D013,,,2025-02-01T10:12:00Z,2025-02-01T10:12:00Z
+U014,user14@test.com,hashed_password123,patient,,P014,,2025-02-01T10:13:00Z,2025-02-01T10:13:00Z
+U015,user15@test.com,hashed_password123,staff,,,S015,2025-02-01T10:14:00Z,2025-02-01T10:14:00Z

@@ -1,0 +1,16 @@
+_id,userId,type,message,relatedEntityType,relatedEntityId,isRead,createdAt
+N001,U001,LHP_SUGGESTION,"New suggested update to LHP for patient P001",LHP,LHP001,false,2025-02-01T10:40:00Z
+N002,U002,UNVERIFIED_PRESCRIPTION,"Prescription PR002 needs verification",PRESCRIPTION,PR002,false,2025-02-01T10:41:00Z
+N003,U003,PATIENT_INITIATED_CONSULTATION,"Patient P003 initiated a consultation request",CONSULTATION,C003,true,2025-02-01T10:42:00Z
+N004,U004,LHP_SUGGESTION,"Suggested record for past procedure",LHP,LHP004,false,2025-02-01T10:43:00Z
+N005,U005,UNVERIFIED_PRESCRIPTION,"Prescription PR006 awaiting review",PRESCRIPTION,PR006,true,2025-02-01T10:44:00Z
+N006,U006,PATIENT_INITIATED_CONSULTATION,"Consultation request from patient P006",CONSULTATION,C006,false,2025-02-01T10:45:00Z
+N007,U007,LHP_SUGGESTION,"AI suggestion for chronic condition approval",LHP,LHP007,false,2025-02-01T10:46:00Z
+N008,U008,UNVERIFIED_PRESCRIPTION,"Prescription PR008 requires review",PRESCRIPTION,PR008,false,2025-02-01T10:47:00Z
+N009,U009,PATIENT_INITIATED_CONSULTATION,"Patient P009 consultation follow-up pending",CONSULTATION,C009,true,2025-02-01T10:48:00Z
+N010,U010,LHP_SUGGESTION,"Suggested Chronic Condition update: Vitamin D deficiency",LHP,LHP010,false,2025-02-01T10:49:00Z
+N011,U011,UNVERIFIED_PRESCRIPTION,"Prescription PR012 requires doctor review",PRESCRIPTION,PR012,false,2025-02-01T10:50:00Z
+N012,U012,LHP_SUGGESTION,"New Med suggestion for patient treatment record",LHP,LHP012,true,2025-02-01T10:51:00Z
+N013,U013,PATIENT_INITIATED_CONSULTATION,"Consultation request not yet reviewed",CONSULTATION,C013,false,2025-02-01T10:52:00Z
+N014,U014,UNVERIFIED_PRESCRIPTION,"Prescription PR014 needs verification by staff",PRESCRIPTION,PR014,true,2025-02-01T10:53:00Z
+N015,U015,LHP_SUGGESTION,"AI flag for potential medication tracking update",LHP,LHP015,false,2025-02-01T10:54:00Z

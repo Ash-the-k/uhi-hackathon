@@ -1,0 +1,16 @@
+_id,patientId,doctorId,createdByRole,createdByUserId,audioPath,transcript,status,prescriptionId,createdAt,updatedAt
+C001,P001,D001,patient,U001,/uploads/audio/consult1.mp3,"Patient complains of headache and fatigue",VERIFIED_DOCTOR,PR001,2025-02-01T10:00:00Z,2025-02-01T10:05:00Z
+C002,P002,D002,doctor,U002,/uploads/audio/consult2.mp3,"Fever for 3 days, mild cough",UNVERIFIED,PR002,2025-02-01T10:01:00Z,2025-02-01T10:06:00Z
+C003,P003,D003,patient,U003,/uploads/audio/consult3.mp3,"Skin rash with itching for one week",VERIFIED_DOCTOR,PR003,2025-02-01T10:02:00Z,2025-02-01T10:07:00Z
+C004,P004,D004,doctor,U004,/uploads/audio/consult4.mp3,"Child with throat pain and cold symptoms",IGNORED_BY_DOCTOR,PR004,2025-02-01T10:03:00Z,2025-02-01T10:04:00Z
+C005,P005,D005,patient,U005,/uploads/audio/consult5.mp3,"High blood pressure follow-up visit",VERIFIED_DOCTOR,PR005,2025-02-01T10:04:00Z,2025-02-01T10:08:00Z
+C006,P006,D006,doctor,U006,/uploads/audio/consult6.mp3,"Menstrual irregularities and cramps",UNVERIFIED,PR006,2025-02-01T10:05:00Z,2025-02-01T10:10:00Z
+C007,P007,D007,patient,U007,/uploads/audio/consult7.mp3,"Knee pain when climbing stairs",VERIFIED_DOCTOR,PR007,2025-02-01T10:06:00Z,2025-02-01T10:07:00Z
+C008,P008,D008,doctor,U008,/uploads/audio/consult8.mp3,"Blurred vision, difficulty reading",UNVERIFIED,PR008,2025-02-01T10:07:00Z,2025-02-01T10:09:00Z
+C009,P009,D009,patient,U009,/uploads/audio/consult9.mp3,"Ear pain and dizziness",VERIFIED_DOCTOR,PR009,2025-02-01T10:08:00Z,2025-02-01T10:11:00Z
+C010,P010,D010,doctor,U010,/uploads/audio/consult10.mp3,"Weight loss and fatigue for 1 month",IGNORED_BY_DOCTOR,PR010,2025-02-01T10:09:00Z,2025-02-01T10:10:00Z
+C011,P011,D011,patient,U011,/uploads/audio/consult11.mp3,"Sleep disturbances and anxiety",VERIFIED_DOCTOR,PR011,2025-02-01T10:10:00Z,2025-02-01T10:12:00Z
+C012,P012,D012,doctor,U012,/uploads/audio/consult12.mp3,"Routine scan review for chest X-Ray",UNVERIFIED,PR012,2025-02-01T10:11:00Z,2025-02-01T10:14:00Z
+C013,P013,D013,patient,U013,/uploads/audio/consult13.mp3,"Frequent urination and back pain",VERIFIED_DOCTOR,PR013,2025-02-01T10:12:00Z,2025-02-01T10:16:00Z
+C014,P014,D014,doctor,U014,/uploads/audio/consult14.mp3,"Thyroid check follow-up",VERIFIED_STAFF,PR014,2025-02-01T10:13:00Z,2025-02-01T10:15:00Z
+C015,P015,D015,patient,U015,/uploads/audio/consult15.mp3,"Kidney stone pain and nausea",VERIFIED_DOCTOR,PR015,2025-02-01T10:14:00Z,2025-02-01T10:19:00Z

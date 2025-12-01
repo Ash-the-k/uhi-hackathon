@@ -1,0 +1,16 @@
+_id,consultationId,patientId,doctorId,createdByRole,createdByUserId,prescriptionText,status,verifiedByDoctorId,verifiedByDoctorName,createdAt,updatedAt
+PR001,C001,P001,D001,doctor,U001,"Tab Paracetamol 500mg – 1 tablet every 6 hours for 3 days",VERIFIED_DOCTOR,D001,"Dr. Arjun Mehta",2025-02-01T10:05:00Z,2025-02-01T10:08:00Z
+PR002,C002,P002,D002,doctor,U002,"Cough syrup 10ml twice a day. Steam inhalation advised.",UNVERIFIED,,,"",2025-02-01T10:06:00Z,2025-02-01T10:06:00Z
+PR003,C003,P003,D003,doctor,U003,"Loratadine 10mg once daily for 7 days. Apply antihistamine cream.",VERIFIED_DOCTOR,D003,"Dr. Priya Menon",2025-02-01T10:07:00Z,2025-02-01T10:10:00Z
+PR004,C004,P004,D004,doctor,U004,"Azithromycin 250mg – 1 tablet per day for 3 days",IGNORED_BY_DOCTOR,,,"",2025-02-01T10:04:00Z,2025-02-01T10:04:00Z
+PR005,C005,P005,D005,doctor,U005,"Amlodipine 5mg once daily. Reduce salt intake.",VERIFIED_DOCTOR,D005,"Dr. Kavita Suresh",2025-02-01T10:08:00Z,2025-02-01T10:11:00Z
+PR006,C006,P006,D006,doctor,U006,"Mefenamic Acid 500mg twice daily after meals.",UNVERIFIED,,,"",2025-02-01T10:10:00Z,2025-02-01T10:10:00Z
+PR007,C007,P007,D007,doctor,U007,"Diclofenac Gel – apply twice a day. Calcium supplement advised.",VERIFIED_DOCTOR,D007,"Dr. Nikhil Verma",2025-02-01T10:07:00Z,2025-02-01T10:09:00Z
+PR008,C008,P008,D008,doctor,U008,"Eye Drop: Carboxymethylcellulose 1 drop every 4 hrs.",UNVERIFIED,,,"",2025-02-01T10:09:00Z,2025-02-01T10:09:00Z
+PR009,C009,P009,D009,doctor,U009,"Ibuprofen 400mg for pain every 8 hrs.",VERIFIED_DOCTOR,D009,"Dr. Sneha Kapoor",2025-02-01T10:11:00Z,2025-02-01T10:13:00Z
+PR010,C010,P010,D010,doctor,U010,"Vitamin B-complex supplement once daily",IGNORED_BY_DOCTOR,,,"",2025-02-01T10:10:00Z,2025-02-01T10:10:00Z
+PR011,C011,P011,D011,doctor,U011,"Alprazolam 0.25mg at bedtime, relaxation therapy suggested",VERIFIED_DOCTOR,D011,"Dr. Ritu Sachdev",2025-02-01T10:12:00Z,2025-02-01T10:15:00Z
+PR012,C012,P012,D012,doctor,U012,"Vitamin C and zinc tablets once a day",UNVERIFIED,,,"",2025-02-01T10:14:00Z,2025-02-01T10:14:00Z
+PR013,C013,P013,D013,doctor,U013,"Cranberry extract capsules twice daily; drink 3L water daily",VERIFIED_DOCTOR,D013,"Dr. Firoz Ahmed",2025-02-01T10:16:00Z,2025-02-01T10:18:00Z
+PR014,C014,P014,D014,staff,U014,"Thyroxine 50mcg once daily",VERIFIED_STAFF,,,"",2025-02-01T10:15:00Z,2025-02-01T10:16:00Z
+PR015,C015,P015,D015,doctor,U015,"Tamsulosin 0.4mg once daily after dinner. Hydration recommended",VERIFIED_DOCTOR,D015,"Dr. Varsha Kulkarni",2025-02-01T10:19:00Z,2025-02-01T10:22:00Z
