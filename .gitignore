@@ -1,0 +1,75 @@
+# ===========================
+#   ROOT LEVEL IGNORE
+# ===========================
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.ide/
+*.swp
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# ===========================
+#   BACKEND
+# ===========================
+
+backend/node_modules/
+backend/.env
+backend/.env.local
+backend/.env.*.local
+backend/dist/
+backend/build/
+backend/coverage/
+
+# Uploads (runtime only, should never be versioned)
+backend/src/uploads/audio/
+backend/src/uploads/images/
+
+
+# ===========================
+#   FRONTEND
+# ===========================
+
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Vite cache
+frontend/.vite/
+frontend/.vite-cache/
+
+# React build artifacts
+frontend/*.css.map
+frontend/*.js.map
+
+
+# ===========================
+#   MISC
+# ===========================
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Yarn / npm workspaces
+.yarn/*
+.pnp.*
