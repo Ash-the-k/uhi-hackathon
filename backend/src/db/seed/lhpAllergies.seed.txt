@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000082",
+    "patientId": "6778c1e4f1f0a9a8f0000003",
+    "label": "Suspected contact allergy (soap)",
+    "notes": "AI-suggested allergy from rash consult; explicitly ignored by doctor.",
+    "status": "IGNORED_BY_DOCTOR",
+    "source": {
+      "type": "CONSULTATION",
+      "eventId": "6778c1e4f1f0a9a8f0000043",
+      "suggestionId": "6778c1e4f1f0a9a8f0000063"
+    },
+    "createdByUserId": "6778c1e4f1f0a9a8f0000033",
+    "createdAt": "2025-02-01T10:33:00Z",
+    "updatedAt": "2025-02-01T10:33:00Z"
+  }
+]

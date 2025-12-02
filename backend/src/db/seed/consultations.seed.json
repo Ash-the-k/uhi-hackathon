@@ -1,0 +1,95 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000041",
+    "patientId": "6778c1e4f1f0a9a8f0000001",
+    "doctorId": "6778c1e4f1f0a9a8f0000011",
+    "createdByRole": "patient",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000034",
+    "audioPath": "/uploads/audio/consult1.mp3",
+    "transcript": "Patient complains of headache and fatigue for 2 days.",
+    "soap": {
+      "current": {
+        "subjective": "Headache and fatigue for 2 days. No vomiting or blurred vision.",
+        "objective": "BP 120/80 mmHg, afebrile, neuro exam normal.",
+        "assessment": "Tension-type headache; low suspicion for migraine.",
+        "plan": "Paracetamol 500mg TID × 3 days; rest; hydration.",
+        "editedByUserId": "6778c1e4f1f0a9a8f0000031",
+        "editedByRole": "doctor",
+        "editedAt": "2025-02-01T10:10:00Z"
+      },
+      "history": [
+        {
+          "subjective": "Mild headache since yesterday.",
+          "objective": "Vitals stable.",
+          "assessment": "Likely benign headache.",
+          "plan": "Observation + hydration.",
+          "editedByUserId": "6778c1e4f1f0a9a8f0000031",
+          "editedByRole": "doctor",
+          "editedAt": "2025-02-01T10:07:00Z"
+        }
+      ]
+    },
+    "status": "VERIFIED_DOCTOR",
+    "prescriptionId": "6778c1e4f1f0a9a8f0000051",
+    "createdAt": "2025-02-01T10:05:00Z",
+    "updatedAt": "2025-02-01T10:10:00Z"  
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000042",
+    "patientId": "6778c1e4f1f0a9a8f0000002",
+    "doctorId": "6778c1e4f1f0a9a8f0000012",
+    "createdByRole": "doctor",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000032",
+    "audioPath": "/uploads/audio/consult2.mp3",
+    "transcript": "Fever and dry cough for 3 days.",
+    "soap": {
+      "current": {
+        "subjective": "Fever (100°F) with dry cough for 3 days.",
+        "objective": "RR 18, SpO2 99%, chest clear.",
+        "assessment": "Viral upper respiratory tract infection.",
+        "plan": "Paracetamol PRN; warm fluids; steam inhalation.",
+        "editedAt": "2025-02-01T10:08:00Z"   
+      },
+      "history": []
+    },
+    "status": "UNVERIFIED",
+    "prescriptionId": "6778c1e4f1f0a9a8f0000052",
+    "createdAt": "2025-02-01T10:08:00Z",
+    "updatedAt": "2025-02-01T10:08:00Z"      
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000043",
+    "patientId": "6778c1e4f1f0a9a8f0000003",
+    "doctorId": "6778c1e4f1f0a9a8f0000013",
+    "createdByRole": "patient",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000036",
+    "audioPath": "/uploads/audio/consult3.mp3",
+    "transcript": "Itchy rash on forearms for one week.",
+    "soap": {
+      "current": {
+        "subjective": "Itchy red rash on both forearms for 1 week.",
+        "objective": "Papular erythematous rash, no discharge.",
+        "assessment": "Contact dermatitis.",
+        "plan": "Topical steroid cream BID; antihistamine HS; avoid irritant.",
+        "editedByUserId": "6778c1e4f1f0a9a8f0000033",
+        "editedByRole": "doctor",
+        "editedAt": "2025-02-01T10:20:00Z"
+      },
+      "history": [
+        {
+          "subjective": "Rash worsening for 3 days.",
+          "objective": "Mild redness, no systemic symptoms.",
+          "assessment": "Suspected mild allergic reaction.",
+          "plan": "Antihistamine trial for 2 days.",
+          "editedByUserId": "6778c1e4f1f0a9a8f0000033",
+          "editedByRole": "doctor",
+          "editedAt": "2025-02-01T10:16:00Z"
+        }
+      ]
+    },
+    "status": "VERIFIED_DOCTOR",
+    "prescriptionId": "6778c1e4f1f0a9a8f0000053",
+    "createdAt": "2025-02-01T10:12:00Z",
+    "updatedAt": "2025-02-01T10:20:00Z"  
+  }
+]

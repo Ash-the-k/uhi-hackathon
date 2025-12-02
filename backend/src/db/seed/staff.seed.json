@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000021",
+    "name": "Anita Pillai",
+    "roleDescription": "Nurse",
+    "createdAt": "2025-02-01T10:00:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000022",
+    "name": "Rohit Malhotra",
+    "roleDescription": "Pharmacist",
+    "createdAt": "2025-02-01T10:01:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000023",
+    "name": "Deepa Chatterjee",
+    "roleDescription": "Front Desk Receptionist",
+    "createdAt": "2025-02-01T10:02:00Z"
+  }
+]

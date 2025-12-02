@@ -1,0 +1,17 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000083",
+    "patientId": "6778c1e4f1f0a9a8f0000002",
+    "label": "Paracetamol Syrup 250mg/5ml QID",
+    "notes": "From prescription PR0052; added to LHP after AI suggestion was accepted.",
+    "status": "VERIFIED_DOCTOR",
+    "source": {
+      "type": "PRESCRIPTION",
+      "eventId": "6778c1e4f1f0a9a8f0000052",
+      "suggestionId": "6778c1e4f1f0a9a8f0000062"
+    },
+    "createdByUserId": "6778c1e4f1f0a9a8f0000032",
+    "createdAt": "2025-02-01T10:31:00Z",
+    "updatedAt": "2025-02-01T10:31:00Z"
+  }
+]

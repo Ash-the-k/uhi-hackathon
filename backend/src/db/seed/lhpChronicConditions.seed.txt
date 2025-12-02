@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000081",
+    "patientId": "6778c1e4f1f0a9a8f0000001",
+    "label": "Hypertension",
+    "notes": "Diagnosed 2 years ago; controlled on medication.",
+    "status": "VERIFIED_DOCTOR",
+    "source": {
+      "type": "CONSULTATION",
+      "eventId": "6778c1e4f1f0a9a8f0000041"
+    },
+    "createdByUserId": "6778c1e4f1f0a9a8f0000031",
+    "createdAt": "2025-02-01T10:30:00Z",
+    "updatedAt": "2025-02-01T10:30:00Z"
+  }
+]

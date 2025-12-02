@@ -1,0 +1,83 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000031",
+    "email": "doctor1@test.com",
+    "passwordHash": "password123",
+    "role": "doctor",
+    "doctorId": "6778c1e4f1f0a9a8f0000011",
+    "createdAt": "2025-02-01T10:00:00Z",
+    "updatedAt": "2025-02-01T10:00:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000032",
+    "email": "doctor2@test.com",
+    "passwordHash": "password123",
+    "role": "doctor",
+    "doctorId": "6778c1e4f1f0a9a8f0000012",
+    "createdAt": "2025-02-01T10:01:00Z",
+    "updatedAt": "2025-02-01T10:01:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000033",
+    "email": "doctor3@test.com",
+    "passwordHash": "password123",
+    "role": "doctor",
+    "doctorId": "6778c1e4f1f0a9a8f0000013",
+    "createdAt": "2025-02-01T10:02:00Z",
+    "updatedAt": "2025-02-01T10:02:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000034",
+    "email": "patient1@test.com",
+    "passwordHash": "password123",
+    "role": "patient",
+    "patientId": "6778c1e4f1f0a9a8f0000001",
+    "createdAt": "2025-02-01T10:03:00Z",
+    "updatedAt": "2025-02-01T10:03:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000035",
+    "email": "patient2@test.com",
+    "passwordHash": "password123",
+    "role": "patient",
+    "patientId": "6778c1e4f1f0a9a8f0000002",
+    "createdAt": "2025-02-01T10:04:00Z",
+    "updatedAt": "2025-02-01T10:04:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000036",
+    "email": "patient3@test.com",
+    "passwordHash": "password123",
+    "role": "patient",
+    "patientId": "6778c1e4f1f0a9a8f0000003",
+    "createdAt": "2025-02-01T10:05:00Z",
+    "updatedAt": "2025-02-01T10:05:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000037",
+    "email": "staff1@test.com",
+    "passwordHash": "password123",
+    "role": "staff",
+    "staffId": "6778c1e4f1f0a9a8f0000021",
+    "createdAt": "2025-02-01T10:06:00Z",
+    "updatedAt": "2025-02-01T10:06:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000038",
+    "email": "staff2@test.com",
+    "passwordHash": "password123",
+    "role": "staff",
+    "staffId": "6778c1e4f1f0a9a8f0000022",
+    "createdAt": "2025-02-01T10:07:00Z",
+    "updatedAt": "2025-02-01T10:07:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000039",
+    "email": "staff3@test.com",
+    "passwordHash": "password123",
+    "role": "staff",
+    "staffId": "6778c1e4f1f0a9a8f0000023",
+    "createdAt": "2025-02-01T10:08:00Z",
+    "updatedAt": "2025-02-01T10:08:00Z"
+  }
+]

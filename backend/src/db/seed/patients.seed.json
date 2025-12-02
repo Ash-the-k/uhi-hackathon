@@ -1,0 +1,32 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000001",
+    "patientCode": "P-0001",
+    "name": "Arjun Mehta",
+    "age": 32,
+    "gender": "M",
+    "phone": "9876100001",
+    "createdAt": "2025-02-01T10:00:00Z",
+    "updatedAt": "2025-02-01T10:00:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000002",
+    "patientCode": "P-0002",
+    "name": "Isha Reddy",
+    "age": 27,
+    "gender": "F",
+    "phone": "9876100002",
+    "createdAt": "2025-02-01T10:01:00Z",
+    "updatedAt": "2025-02-01T10:01:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000003",
+    "patientCode": "P-0003",
+    "name": "Rohit Sharma",
+    "age": 45,
+    "gender": "M",
+    "phone": "9876100003",
+    "createdAt": "2025-02-01T10:02:00Z",
+    "updatedAt": "2025-02-01T10:02:00Z"
+  }
+]

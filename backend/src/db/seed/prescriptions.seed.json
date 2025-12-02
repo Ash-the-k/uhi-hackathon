@@ -1,0 +1,144 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000051",
+    "patientId": "6778c1e4f1f0a9a8f0000001",
+    "doctorId": "6778c1e4f1f0a9a8f0000011",
+    "createdByRole": "doctor",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000031",
+    "linkedConsultationId": "6778c1e4f1f0a9a8f0000041",
+    "imagePath": "/uploads/images/prescription1.png",
+    "rawOcrText": "Tab Paracetamol 500mg – 1 tablet TID for 3 days",
+    "meds": {
+      "current": {
+        "medications": [
+          {
+            "name": "Paracetamol",
+            "dosage": "500mg",
+            "frequency": "TID",
+            "route": "oral",
+            "duration": "3 days",
+            "instructions": "Take after food. Do not exceed 3g/day.",
+            "isCurrent": true
+          }
+        ],
+        "editedByUserId": "6778c1e4f1f0a9a8f0000031",
+        "editedByRole": "doctor",
+        "editedAt": "2025-02-01T10:13:00Z"
+      },
+      "history": [
+        {
+          "medications": [
+            {
+              "name": "Paracetamol",
+              "dosage": "500mg",
+              "frequency": "BID",
+              "route": "oral",
+              "duration": "2 days",
+              "instructions": "Initial plan, then adjusted.",
+              "isCurrent": false
+            }
+          ],
+          "editedByUserId": "6778c1e4f1f0a9a8f0000031",
+          "editedByRole": "doctor",
+          "editedAt": "2025-02-01T10:12:00Z"
+        }
+      ]
+    },
+    "status": "VERIFIED_DOCTOR",
+    "createdAt": "2025-02-01T10:11:00Z",
+    "updatedAt": "2025-02-01T10:13:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000052",
+    "patientId": "6778c1e4f1f0a9a8f0000002",
+    "doctorId": "6778c1e4f1f0a9a8f0000012",
+    "createdByRole": "doctor",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000032",
+    "linkedConsultationId": "6778c1e4f1f0a9a8f0000042",
+    "imagePath": "/uploads/images/prescription2.png",
+    "rawOcrText": "Syrup Paracetamol 250mg/5ml – 10ml QID if fever.",
+    "meds": {
+      "current": {
+        "medications": [
+          {
+            "name": "Paracetamol Syrup",
+            "dosage": "250mg/5ml",
+            "frequency": "QID",
+            "route": "oral",
+            "duration": "3 days",
+            "instructions": "10ml if fever >100°F; max 4 doses/day.",
+            "isCurrent": true
+          }
+        ],
+        "editedAt": "2025-02-01T10:16:00Z"
+      },
+      "history": []
+    },
+    "status": "UNVERIFIED",
+    "createdAt": "2025-02-01T10:16:00Z",
+    "updatedAt": "2025-02-01T10:16:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000053",
+    "patientId": "6778c1e4f1f0a9a8f0000003",
+    "doctorId": "6778c1e4f1f0a9a8f0000013",
+    "staffId": "6778c1e4f1f0a9a8f0000021",          
+    "createdByRole": "doctor",
+    "createdByUserId": "6778c1e4f1f0a9a8f0000033",  
+    "linkedConsultationId": "6778c1e4f1f0a9a8f0000043",
+    "imagePath": "/uploads/images/prescription3.png",
+    "rawOcrText": "Tab Loratadine 10mg OD and topical steroid cream BID.",
+    "meds": {
+      "current": {
+        "medications": [
+          {
+            "name": "Loratadine",
+            "dosage": "10mg",
+            "frequency": "OD",
+            "route": "oral",
+            "duration": "7 days",
+            "instructions": "Take at night.",
+            "isCurrent": true,
+            "dispensedByStaffId": "6778c1e4f1f0a9a8f0000021",
+            "dispensedAt": "2025-02-01T10:22:30Z"
+          },
+          {
+            "name": "Topical Steroid Cream",
+            "dosage": "thin layer",
+            "frequency": "BID",
+            "route": "topical",
+            "duration": "5 days",
+            "instructions": "Apply on affected area only.",
+            "isCurrent": true,
+            "dispensedByStaffId": "6778c1e4f1f0a9a8f0000021",
+            "dispensedAt": "2025-02-01T10:22:30Z"
+          }
+        ],
+        "editedByUserId": "6778c1e4f1f0a9a8f0000037", 
+        "editedByRole": "staff",
+        "editedAt": "2025-02-01T10:22:00Z"
+      },
+      "history": [
+        {
+          "medications": [
+            {
+              "name": "Loratadine",
+              "dosage": "10mg",
+              "frequency": "OD",
+              "route": "oral",
+              "duration": "5 days",
+              "instructions": "Initial shorter duration.",
+              "isCurrent": false
+            }
+          ],
+          "editedByUserId": "6778c1e4f1f0a9a8f0000033",
+          "editedByRole": "doctor",
+          "editedAt": "2025-02-01T10:20:00Z"
+        }
+      ]
+    },
+    "status": "VERIFIED_STAFF",
+    "createdAt": "2025-02-01T10:19:00Z",
+    "updatedAt": "2025-02-01T10:22:00Z"
+  }
+]

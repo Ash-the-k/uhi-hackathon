@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "6778c1e4f1f0a9a8f0000011",
+    "name": "Dr. Arvind Rao",
+    "specialization": "Cardiology",
+    "registrationNumber": "LICC1001",
+    "createdAt": "2025-02-01T10:00:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000012",
+    "name": "Dr. Shreya Banerjee",
+    "specialization": "Neurology",
+    "registrationNumber": "LICN1002",
+    "createdAt": "2025-02-01T10:01:00Z"
+  },
+  {
+    "_id": "6778c1e4f1f0a9a8f0000013",
+    "name": "Dr. Priya Menon",
+    "specialization": "Pediatrics",
+    "registrationNumber": "LICP1003",
+    "createdAt": "2025-02-01T10:02:00Z"
+  }
+]
