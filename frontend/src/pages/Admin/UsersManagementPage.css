@@ -1,0 +1,32 @@
+/* UsersManagementPage.css */
+.ump-page { padding: 18px 22px; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
+.ump-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.ump-left h2 { margin:0; }
+.ump-sub { color:#6b7280; font-size:13px; }
+
+.ump-actions { display:flex; gap:10px; align-items:center; }
+.ump-search-form { display:flex; gap:8px; align-items:center; }
+.ump-search-form input { padding:8px 10px; border-radius:8px; border:1px solid #e6e9ef; }
+.ump-search-form button { padding:8px 10px; border-radius:8px; border:1px solid #e6e9ef; background:#fff; cursor:pointer; }
+
+.ump-btn { padding:8px 12px; background:#2563eb; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+.ump-logout { padding:8px 10px; background:#ef4444; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+
+.ump-main { background: #fff; padding: 12px; border-radius: 10px; box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
+.ump-loading, .ump-error { padding: 20px; text-align:center; color:#374151; }
+
+.ump-table-wrap { overflow-x:auto; }
+.ump-table { width:100%; border-collapse: collapse; }
+.ump-table th, .ump-table td { text-align:left; padding:10px 12px; border-bottom:1px solid #f3f4f6; }
+.ump-pager { display:flex; justify-content:center; align-items:center; gap:12px; margin-top:12px; padding:8px; }
+.ump-pager button { padding:8px 10px; border-radius:8px; border:1px solid #e6e9ef; background:#fff; cursor:pointer; }
+
+/* highlight matching search results */
+.ump-row-highlight { background: linear-gradient(90deg, #fffdf2, #ffffff); }
+.ump-row-highlight td { background: transparent; }
+
+.ump-create-form { display:flex; flex-direction:column; gap:8px; }
+.ump-create-form input, .ump-create-form select { padding:8px; border-radius:8px; border:1px solid #e6e9ef; }
+.ump-modal-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
+.ump-modal-actions button { padding:8px 12px; border-radius:8px; cursor:pointer; }
+.ump-create-err { color:#b91c1c; font-size:13px; margin-top:6px; }
