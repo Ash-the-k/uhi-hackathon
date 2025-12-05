@@ -34,12 +34,35 @@ async function requireAuth(req, res, next) {
     }
 
     // Put decoded into req.user (common fields)
-    req.user = Object.assign({}, decoded);
+    // Normalize a few field names used across the app
+    const user = {
+      // prefer sub but accept other variants
+      userId: decoded.sub || decoded.userId || decoded.id || null,
+      sub: decoded.sub || null,
+      role: decoded.role || decoded.r || null,
+      name: decoded.name || null,
+      email: decoded.email || null,
+      doctorId: decoded.doctorId || null,
+      patientId: decoded.patientId || null,
+      staffId: decoded.staffId || null
+    };
 
-    // Normalize userId field name for convenience
-    if (!req.user.userId && req.user.sub) req.user.userId = req.user.sub;
+    req.user = user;
 
-    // If token doesn't include doctorId/patientId/staffId, attach from User doc
+    // DEBUG logs to help trace RBAC/forbidden problems during dev (safe to keep)
+    try {
+      console.log('requireAuth: token payload ->', {
+        sub: decoded.sub,
+        role: decoded.role,
+        doctorId: decoded.doctorId,
+        patientId: decoded.patientId,
+        staffId: decoded.staffId
+      });
+      console.log('requireAuth: initial req.user ->', req.user);
+    } catch (e) { /* ignore logging errors */ }
+
+    // If token didn't include domain ids, try one DB lookup to attach them
+    // This avoids many lookups in controllers while ensuring required context exists.
     if ((!req.user.doctorId || !req.user.patientId || !req.user.staffId) && req.user.userId) {
       try {
         const u = await User.findById(req.user.userId).lean().exec();
@@ -47,15 +70,17 @@ async function requireAuth(req, res, next) {
           if (!req.user.doctorId && u.doctorId) req.user.doctorId = String(u.doctorId);
           if (!req.user.patientId && u.patientId) req.user.patientId = String(u.patientId);
           if (!req.user.staffId && u.staffId) req.user.staffId = String(u.staffId);
-          // also normalize name/email if helpful
           if (!req.user.email && u.email) req.user.email = u.email;
           if (!req.user.name && u.name) req.user.name = u.name;
         }
       } catch (e) {
-        // if DB lookup fails, continue without IDs (controllers will handle missing context)
         console.warn('authMiddleware: user lookup failed', e && e.message);
+        // continue without DB-enriched IDs — controllers should handle missing context
       }
     }
+
+    // Final debug
+    try { console.log('requireAuth: resolved req.user ->', req.user); } catch (e) {}
 
     return next();
   } catch (err) {

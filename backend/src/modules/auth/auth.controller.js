@@ -42,7 +42,7 @@ async function login(req, res, next) {
     if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
     // If you store passwordHash on user, verify it. If you use a different scheme adapt this.
-    const passwordHash = user.passwordHash || user.password; // fallback
+    const passwordHash = user.passwordHash || user.password; // fallback if seed uses `password` field
     const ok = passwordHash ? await bcrypt.compare(password, passwordHash) : false;
     if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
 

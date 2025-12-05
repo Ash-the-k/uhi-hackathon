@@ -49,7 +49,7 @@ mountIfRouter('/prescriptions', path.join(__dirname, '..', 'modules', 'prescript
 mountIfRouter('/lhp', path.join(__dirname, '..', 'modules', 'lhp', 'lhp.routes'));
 mountIfRouter('/timeline', path.join(__dirname, '..', 'modules', 'timeline', 'timeline.routes'));
 mountIfRouter('/notifications', path.join(__dirname, '..', 'modules', 'notifications', 'notifications.routes'));
-
+mountIfRouter('/appointments', path.join(__dirname, '..', 'modules', 'appointments', 'appointments.routes'));
 // default health / info route on the router (optional)
 router.get('/', (req, res) => res.json({ ok: true, routes: 'see server logs for mounted routes' }));
 

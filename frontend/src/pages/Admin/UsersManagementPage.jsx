@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import api from '../../api/httpClient';
 import SimpleModal from '../../components/common/SimpleModal';
 import './UsersManagementPage.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function UsersManagementPage() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -173,6 +175,7 @@ export default function UsersManagementPage() {
         </div>
 
         <div className="ump-actions">
+          <button className="ump-btn" onClick={() => navigate('/admin/appointments')} style={{ marginRight: 8 }}>Appointments</button>
           <form onSubmit={onSearch} className="ump-search-form">
             <input
               placeholder="Search by email..."
