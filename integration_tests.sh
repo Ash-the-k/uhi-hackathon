@@ -4,8 +4,8 @@
 # Requirements: bash, curl, jq, node (for JWT decoding)
 
 # Run this script after starting the server locally (assumes localhost:4000)
-# chmod +x integration_tests_full.sh
-# ./integration_tests_full.sh
+# chmod +x integration_tests.sh
+# ./integration_tests.sh
 
 set -euo pipefail
 BASE="http://localhost:4000/api"
