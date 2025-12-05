@@ -1,8 +1,7 @@
 /**
  * authMiddleware.js
  * - verifies JWT from Authorization header
- * - attaches `req.user` (decoded token)
- * - if token lacks doctorId/patientId/staffId, performs one DB lookup to attach them
+ * - attaches `req.user` (decoded token + DB-enriched IDs)
  * - exports: requireAuth, requireRole
  */
 const jwt = require('jsonwebtoken');
@@ -21,10 +20,17 @@ function parseAuthHeader(req) {
   return token;
 }
 
+/**
+ * requireAuth
+ * - verifies JWT
+ * - sets req.user = { id, userId, role, email, name, doctorId, patientId, staffId }
+ */
 async function requireAuth(req, res, next) {
   try {
     const token = parseAuthHeader(req);
-    if (!token) return res.status(401).json({ error: 'Unauthorized: no token' });
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: no token' });
+    }
 
     let decoded;
     try {
@@ -33,67 +39,114 @@ async function requireAuth(req, res, next) {
       return res.status(401).json({ error: 'Unauthorized: invalid token' });
     }
 
-    // Put decoded into req.user (common fields)
-    // Normalize a few field names used across the app
+    // Normalize common fields from token
+    const idFromToken =
+      decoded.sub || decoded.userId || decoded.id || null;
+
+    const roleFromToken = (decoded.role || decoded.r || '').toString().toLowerCase() || null;
+
     const user = {
-      // prefer sub but accept other variants
-      userId: decoded.sub || decoded.userId || decoded.id || null,
+      id: idFromToken,               // <- this is what your controllers use (req.user.id)
+      userId: idFromToken,           // alias, for convenience
       sub: decoded.sub || null,
-      role: decoded.role || decoded.r || null,
+      role: roleFromToken,
       name: decoded.name || null,
       email: decoded.email || null,
       doctorId: decoded.doctorId || null,
       patientId: decoded.patientId || null,
-      staffId: decoded.staffId || null
+      staffId: decoded.staffId || null,
     };
 
     req.user = user;
 
-    // DEBUG logs to help trace RBAC/forbidden problems during dev (safe to keep)
+    // DEBUG (optional) – you can comment these out later
     try {
       console.log('requireAuth: token payload ->', {
         sub: decoded.sub,
         role: decoded.role,
         doctorId: decoded.doctorId,
         patientId: decoded.patientId,
-        staffId: decoded.staffId
+        staffId: decoded.staffId,
       });
       console.log('requireAuth: initial req.user ->', req.user);
     } catch (e) { /* ignore logging errors */ }
 
-    // If token didn't include domain ids, try one DB lookup to attach them
-    // This avoids many lookups in controllers while ensuring required context exists.
-    if ((!req.user.doctorId || !req.user.patientId || !req.user.staffId) && req.user.userId) {
+    // Enrich with domain IDs from User document if missing
+    if (req.user.id) {
       try {
-        const u = await User.findById(req.user.userId).lean().exec();
+        const u = await User.findById(req.user.id).lean().exec();
         if (u) {
-          if (!req.user.doctorId && u.doctorId) req.user.doctorId = String(u.doctorId);
-          if (!req.user.patientId && u.patientId) req.user.patientId = String(u.patientId);
-          if (!req.user.staffId && u.staffId) req.user.staffId = String(u.staffId);
-          if (!req.user.email && u.email) req.user.email = u.email;
-          if (!req.user.name && u.name) req.user.name = u.name;
+          if (!req.user.doctorId && u.doctorId) {
+            req.user.doctorId = String(u.doctorId);
+          }
+          if (!req.user.patientId && u.patientId) {
+            req.user.patientId = String(u.patientId);
+          }
+          if (!req.user.staffId && u.staffId) {
+            req.user.staffId = String(u.staffId);
+          }
+          if (!req.user.email && u.email) {
+            req.user.email = u.email;
+          }
+          if (!req.user.name && u.name) {
+            req.user.name = u.name;
+          }
+          if (!req.user.role && u.role) {
+            req.user.role = String(u.role).toLowerCase();
+          }
         }
       } catch (e) {
         console.warn('authMiddleware: user lookup failed', e && e.message);
-        // continue without DB-enriched IDs — controllers should handle missing context
+        // continue even if lookup fails – controllers should handle missing context
       }
     }
 
-    // Final debug
-    try { console.log('requireAuth: resolved req.user ->', req.user); } catch (e) {}
+    // Final debug (optional)
+    try {
+      console.log('requireAuth: resolved req.user ->', req.user);
+    } catch (e) {}
 
     return next();
   } catch (err) {
-    return next(err);
+    console.error('requireAuth unexpected error', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 }
 
+/**
+ * requireRole
+ * - allowedRoles: string | string[]
+ * - compares case-insensitive against req.user.role
+ */
 function requireRole(roles = []) {
+  const allowed = (Array.isArray(roles) ? roles : [roles])
+    .map(r => String(r).toLowerCase());
+
   return (req, res, next) => {
-    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-    if (!roles.includes(req.user.role)) return res.status(403).json({ error: 'Forbidden' });
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const role = (req.user.role || '').toString().toLowerCase();
+    console.log('requireRole: checking', { role, allowed, userId: req.user.id });
+
+    if (!role) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    if (!allowed.includes(role)) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        reason: 'role-not-allowed',
+        role,
+        allowed,
+      });
+    }
+
     return next();
   };
 }
 
 module.exports = { requireAuth, requireRole };
+module.exports.requireAuth = requireAuth;
+module.exports.requireRole = requireRole;

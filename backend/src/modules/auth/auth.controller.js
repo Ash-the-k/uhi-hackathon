@@ -1,8 +1,9 @@
 /**
  * auth.controller.js
- * - basic login implementation that issues JWT including doctorId/patientId/staffId when available
- * - safe: uses password compare via bcrypt (assumes user.passwordHash exists)
- * - Adapt to your existing user lookup if function names/path differ.
+ * - POST /api/auth/login
+ * - finds user by email
+ * - verifies password (supports passwordHash with bcrypt OR plain password)
+ * - issues JWT that includes: sub, role, doctorId/patientId/staffId, email, name
  */
 
 const jwt = require('jsonwebtoken');
@@ -16,7 +17,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '12h';
 function signTokenForUser(user) {
   const payload = {
     sub: String(user._id),
-    role: user.role
+    role: user.role,
   };
 
   // include pointers if they exist on the user doc
@@ -36,18 +37,39 @@ function signTokenForUser(user) {
 async function login(req, res, next) {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) return res.status(400).json({ error: 'email and password required' });
 
-    const user = await User.findOne({ email }).lean().exec();
-    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'email and password required' });
+    }
 
-    // If you store passwordHash on user, verify it. If you use a different scheme adapt this.
-    const passwordHash = user.passwordHash || user.password; // fallback if seed uses `password` field
-    const ok = passwordHash ? await bcrypt.compare(password, passwordHash) : false;
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+    const user = await User.findOne({ email }).exec();
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Support both hashed and plain passwords (for seeded/demo data)
+    let ok = false;
+
+    if (user.passwordHash) {
+      // Normal secure path
+      ok = await bcrypt.compare(password, user.passwordHash);
+    } else if (user.password) {
+      // Fallback: plain-text comparison (if your seeds/store `password` in clear)
+      ok = password === user.password;
+    }
+
+    if (!ok) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
     const token = signTokenForUser(user);
-    return res.json({ token, role: user.role, userId: String(user._id) });
+
+    // Frontend + tests expect this shape:
+    return res.json({
+      token,
+      role: user.role,
+      userId: String(user._id),
+    });
   } catch (err) {
     return next(err);
   }
