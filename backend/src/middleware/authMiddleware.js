@@ -19,16 +19,28 @@ function requireAuth(req, res, next) {
     if (!token) return res.status(401).json({ error: 'Unauthorized: no token' });
 
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    // payload should contain sub, role, name, maybe doctorId/patientId/staffId
+    // DEBUG: log payload role/sub for troubleshooting Forbidden issues
+    try {
+      console.log('requireAuth: token payload ->', { sub: payload.sub, role: payload.role });
+    } catch (e) { /* ignore logging errors */ }
+    
+    const userId = payload.sub || payload.userId || payload.id || null;
+    const role = payload.role || payload.r || null;
+
     const user = {
+      id: userId,
       sub: payload.sub,
-      role: payload.role,
+      role: role,
       name: payload.name,
       doctorId: payload.doctorId,
       patientId: payload.patientId,
       staffId: payload.staffId
     };
     req.user = user;
+    // DEBUG: expose resolved user info for middleware diagnostics
+    try {
+      console.log('requireAuth: req.user ->', req.user);
+    } catch (e) { /* ignore */ }
     return next();
   } catch (err) {
     return res.status(401).json({ error: 'Unauthorized: invalid token' });

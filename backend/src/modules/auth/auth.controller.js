@@ -21,7 +21,17 @@ const login = async (req, res) => {
   if (!user) return res.status(401).json({ error: 'Invalid credentials' });
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
-  const payload = { sub: user._id.toString(), role: user.role, name: user.name };
+  
+  // Include domain IDs (doctorId, patientId, staffId) in JWT payload
+  const payload = {
+    sub: user._id.toString(),
+    role: user.role,
+    name: user.name,
+    doctorId: user.doctorId ? user.doctorId.toString() : undefined,
+    patientId: user.patientId ? user.patientId.toString() : undefined,
+    staffId: user.staffId ? user.staffId.toString() : undefined
+  };
+  
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
   res.json({ token, role: user.role, userId: user._id });
 };
