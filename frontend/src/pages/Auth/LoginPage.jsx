@@ -71,15 +71,15 @@ export default function LoginPage() {
           <div className="lp-features">
             <div className="feat">
               <strong>Patients</strong>
-              <span>Manage timelines & prescriptions</span>
+              <span>Book Appointments & Manage prescriptions</span>
             </div>
             <div className="feat">
               <strong>Doctors</strong>
-              <span>View consultations & SOAP notes</span>
+              <span>Consultation, Prescription & SOAP Notes</span>
             </div>
             <div className="feat">
               <strong>Admin</strong>
-              <span>Create accounts, manage users</span>
+              <span>Create accounts & Manage users</span>
             </div>
           </div>
 
@@ -125,19 +125,6 @@ export default function LoginPage() {
                 />
                 Remember me
               </label>
-
-              <button
-                type="button"
-                className="lp-link"
-                onClick={() =>
-                  alert(
-                    'Test credentials:\n\nAdmin: admin@test.com / admin123\nDoctor: doctor1@test.com / password123\nPatient: patient1@test.com / password123\nStaff: staff1@test.com / password123'
-                  )
-                }
-              >
-                Test creds
-              </button>
-
             </div>
 
             <div className="lp-actions">

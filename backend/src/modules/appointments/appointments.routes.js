@@ -22,6 +22,9 @@ router.get('/mine', requireAuth, requireRole(['patient']), ctrl.getMyAppointment
 // DOCTOR — get appointments assigned to the doctor
 router.get('/doctor', requireAuth, requireRole(['doctor']), ctrl.getDoctorAppointments);
 
+// DOCTOR/ADMIN — get appointment by id
+router.get('/:id', requireAuth, requireRole(['doctor', 'admin']), ctrl.getAppointmentById);
+
 // DOCTOR — update appointment status (completed/cancelled) — MUST come BEFORE /:id/start
 router.patch('/:id/status', requireAuth, requireRole(['doctor']), ctrl.updateStatus);
 

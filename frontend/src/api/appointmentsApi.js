@@ -10,6 +10,9 @@ export const appointmentsApi = {
   // Doctor views their appointments
   getDoctorAppointments: () => api.get('/appointments/doctor'),
 
+  // Get appointment by ID
+  getById: (id) => api.get(`/appointments/${id}`),
+
   // Admin views all appointments
   getAll: () => api.get('/appointments'),
 

@@ -254,6 +254,40 @@ exports.getDoctorAppointments = async (req, res) => {
 };
 
 /* ---------------------------------------------
+   GET /api/appointments/:id   (Doctor/Admin)
+---------------------------------------------- */
+exports.getAppointmentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid appointment id' });
+    }
+
+    const appointment = await Appointment.findById(id).lean();
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    // Populate patient and doctor details
+    const patient = await Patient.findById(appointment.patientId).lean();
+    const doctor = await Doctor.findById(appointment.doctorId).lean();
+
+    return res.json({
+      success: true,
+      appointment: {
+        ...appointment,
+        patient: patient || null,
+        doctor: doctor || null
+      }
+    });
+  } catch (err) {
+    console.error('getAppointmentById error:', err.message, err.stack);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+/* ---------------------------------------------
    PATCH /api/appointments/:id/start   (Doctor)
 ---------------------------------------------- */
 exports.startAppointment = async (req, res) => {

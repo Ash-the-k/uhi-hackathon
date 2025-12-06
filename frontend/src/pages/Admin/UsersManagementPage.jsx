@@ -13,7 +13,7 @@ export default function UsersManagementPage() {
 
   // pagination + search
   const [page, setPage] = useState(1);
-  const [limit] = useState(8);
+  const [limit] = useState(12);
   const [search, setSearch] = useState('');
 
   // modal state for create user
@@ -62,7 +62,7 @@ export default function UsersManagementPage() {
       // client-side search (backend may not support search query)
       const q = (search || '').trim().toLowerCase();
       if (q) {
-        allItems = allItems.filter(u => (u.email || '').toLowerCase().includes(q));
+        allItems = allItems.filter(u => (u.name || '').toLowerCase().includes(q));
       }
 
       // pagination (client-side fallback)
@@ -178,7 +178,7 @@ export default function UsersManagementPage() {
           <button className="ump-btn" onClick={() => navigate('/admin/appointments')} style={{ marginRight: 8 }}>Appointments</button>
           <form onSubmit={onSearch} className="ump-search-form">
             <input
-              placeholder="Search by email..."
+              placeholder="Search by name..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -210,7 +210,8 @@ export default function UsersManagementPage() {
                   {users.length === 0 ? (
                     <tr><td colSpan="4" style={{ textAlign: 'center', padding: 20 }}>No users found</td></tr>
                   ) : users.map(u => {
-                    const isMatch = search && (u.email || '').toLowerCase().includes(search.trim().toLowerCase());
+                    const q = (search || '').trim().toLowerCase();
+                    const isMatch = search && (u.name || '').toLowerCase().includes(q);
                     return (
                       <tr key={u._id || u.email} className={isMatch ? 'ump-row-highlight' : ''}>
                         <td>{u.email}</td>
@@ -254,7 +255,26 @@ export default function UsersManagementPage() {
                 <label>Doctor name</label>
                 <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                 <label>Specialization</label>
-                <input value={form.specialization} onChange={e => setForm(f => ({ ...f, specialization: e.target.value }))} />
+                <select 
+                  value={form.specialization} 
+                  onChange={e => setForm(f => ({ ...f, specialization: e.target.value }))}
+                  style={{ padding: '8px', borderRadius: '8px', border: '1px solid #e6e9ef' }}
+                >
+                  <option value="">-- Select Specialization --</option>
+                  <option value="Cardiology">Cardiology</option>
+                  <option value="Neurology">Neurology</option>
+                  <option value="Pediatrics">Pediatrics</option>
+                  <option value="Dermatology">Dermatology</option>
+                  <option value="Gynecology">Gynecology</option>
+                  <option value="Orthopedics">Orthopedics</option>
+                  <option value="General Medicine">General Medicine</option>
+                  <option value="ENT">ENT</option>
+                  <option value="Gastroenterology">Gastroenterology</option>
+                  <option value="Psychiatry">Psychiatry</option>
+                  <option value="Endocrinology">Endocrinology</option>
+                  <option value="Pulmonology">Pulmonology</option>
+                  <option value="Ophthalmology">Ophthalmology</option>
+                </select>
               </>
             )}
 

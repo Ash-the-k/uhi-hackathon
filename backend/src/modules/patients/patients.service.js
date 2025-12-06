@@ -1,7 +1,14 @@
-let store = [];
-exports.list = async () => store;
-exports.getById = async (id) => store.find(x=>x._id===id);
+const Patient = require('../../db/models/Patient');
+
+exports.list = async () => {
+  return await Patient.find().lean().exec();
+};
+
+exports.getById = async (id) => {
+  return await Patient.findById(id).lean().exec();
+};
+
 exports.create = async (data) => {
-  const obj = { ...data, _id:(Math.random()*1e18).toString(36) };
-  store.push(obj); return obj;
+  const patient = await Patient.create(data);
+  return patient.toObject();
 };

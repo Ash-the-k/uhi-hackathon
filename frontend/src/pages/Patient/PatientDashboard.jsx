@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api/httpClient';
 import appointmentsApi from '../../api/appointmentsApi';
-import { getDoctors, getSpecializations } from '../../api/doctorsApi';
+import { getDoctors } from '../../api/doctorsApi';
 import Navbar from '../../components/layout/Navbar';
 
 export default function PatientDashboard() {
-  const [timeline, setTimeline] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  // Initialize with fallback specializations so dropdown works immediately
-  const [specializations, setSpecializations] = useState(['Cardiology', 'Neurology', 'Pediatrics']);
+  // Initialize with the same 13 specializations as admin page, in the same order
+  const [specializations, setSpecializations] = useState([
+    'Cardiology',
+    'Neurology',
+    'Pediatrics',
+    'Dermatology',
+    'Gynecology',
+    'Orthopedics',
+    'General Medicine',
+    'ENT',
+    'Gastroenterology',
+    'Psychiatry',
+    'Endocrinology',
+    'Pulmonology',
+    'Ophthalmology'
+  ]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -19,7 +32,10 @@ export default function PatientDashboard() {
   const [bookingForm, setBookingForm] = useState({
     specialization: '',
     doctorId: '',
-    datetime: '',
+    date: '',
+    hour: '',
+    minute: '',
+    ampm: 'AM',
     notes: ''
   });
   const [bookingLoading, setBookingLoading] = useState(false);
@@ -31,42 +47,51 @@ export default function PatientDashboard() {
     const fetchData = async () => {
       setLoading(true);
       setErr('');
+      let appointmentsLoaded = false;
+      
       try {
         // Fetch appointments
-        const appointRes = await appointmentsApi.getMyAppointments();
-        if (mounted) setAppointments(appointRes.data.items || appointRes.data || []);
-
-        // Fetch timeline
-        const timeRes = await api.get('/timeline');
-        if (mounted) setTimeline(timeRes.data.items || timeRes.data || []);
-
-        // Fetch specializations with immediate fallback
-        const fallbackSpecs = ['Cardiology', 'Neurology', 'Pediatrics'];
-        
         try {
-          const specs = await getSpecializations();
-          console.log('Fetched specializations from API:', specs);
-          
-          // Handle response - should be an array
-          let specsArray = Array.isArray(specs) ? specs : (specs?.data || []);
-          
-          // Filter out null/undefined/empty values
-          specsArray = specsArray.filter(s => s && typeof s === 'string' && s.trim().length > 0);
-          
-          console.log('Processed specializations:', specsArray);
-          
-          // Use API data if available, otherwise use fallback
-          const finalSpecs = specsArray.length > 0 ? specsArray : fallbackSpecs;
-          console.log('Setting specializations to:', finalSpecs);
-          if (mounted) setSpecializations(finalSpecs);
-        } catch (specErr) {
-          console.error('Error fetching specializations, using fallback:', specErr);
-          // Always use fallback on error
-          if (mounted) setSpecializations(fallbackSpecs);
+          const appointRes = await appointmentsApi.getMyAppointments();
+          if (mounted) {
+            setAppointments(appointRes.data.items || appointRes.data || []);
+            appointmentsLoaded = true;
+          }
+        } catch (appointErr) {
+          console.error('Error fetching appointments:', appointErr);
+          if (mounted) {
+            setErr(appointErr?.response?.data?.message || 'Failed to load appointments');
+          }
         }
+
+
+        // Use the same 13 specializations as admin page (always use this list for consistency)
+        // This ensures the patient dashboard always shows the same options as admin
+        const adminSpecializations = [
+          'Cardiology',
+          'Neurology',
+          'Pediatrics',
+          'Dermatology',
+          'Gynecology',
+          'Orthopedics',
+          'General Medicine',
+          'ENT',
+          'Gastroenterology',
+          'Psychiatry',
+          'Endocrinology',
+          'Pulmonology',
+          'Ophthalmology'
+        ];
+        
+        // Always use the admin specializations list to ensure consistency
+        // The API might return different data, but we want to match admin exactly
+        if (mounted) setSpecializations(adminSpecializations);
       } catch (e) {
-        console.error(e);
-        if (mounted) setErr(e?.response?.data?.message || 'Failed to load data');
+        console.error('Unexpected error:', e);
+        // Only show error if appointments failed to load
+        if (mounted && !appointmentsLoaded) {
+          setErr(e?.response?.data?.message || 'Failed to load data');
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -109,8 +134,8 @@ export default function PatientDashboard() {
 
   const handleBookAppointment = async (e) => {
     e.preventDefault();
-    if (!bookingForm.doctorId || !bookingForm.datetime) {
-      setErr('Please select a doctor and datetime');
+    if (!bookingForm.doctorId || !bookingForm.date || !bookingForm.hour || !bookingForm.minute) {
+      setErr('Please select a doctor, date, and time');
       return;
     }
 
@@ -119,15 +144,27 @@ export default function PatientDashboard() {
     setSuccessMsg('');
 
     try {
+      // Convert 12-hour time to 24-hour format
+      let hour24 = parseInt(bookingForm.hour, 10);
+      if (bookingForm.ampm === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (bookingForm.ampm === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+      const time24 = `${hour24.toString().padStart(2, '0')}:${bookingForm.minute}`;
+      
+      // Combine date and time
+      const datetime = `${bookingForm.date}T${time24}:00`;
+
       const response = await appointmentsApi.create({
         doctorId: bookingForm.doctorId,
-        datetime: bookingForm.datetime,
+        datetime: datetime,
         notes: bookingForm.notes
       });
 
       if (response.data.success) {
         setSuccessMsg('Appointment booked successfully!');
-        setBookingForm({ specialization: '', doctorId: '', datetime: '', notes: '' });
+        setBookingForm({ specialization: '', doctorId: '', date: '', hour: '', minute: '', ampm: 'AM', notes: '' });
         
         // Refresh appointments list
         const updatedAppointments = await appointmentsApi.getMyAppointments();
@@ -148,17 +185,18 @@ export default function PatientDashboard() {
         <h2>Patient Dashboard</h2>
 
         {/* Tabs */}
-        <div style={{ marginBottom: '20px', borderBottom: '2px solid #ccc' }}>
+        <div style={{ marginBottom: '20px', borderBottom: '2px solid #ccc', display: 'flex' }}>
           <button
             onClick={() => setActiveTab('appointments')}
             style={{
               padding: '10px 20px',
-              marginRight: '10px',
+              flex: '1',
               background: activeTab === 'appointments' ? '#0066cc' : '#f0f0f0',
               color: activeTab === 'appointments' ? 'white' : 'black',
               border: 'none',
               cursor: 'pointer',
-              borderRadius: '4px 4px 0 0'
+              borderRadius: '4px 4px 0 0',
+              marginRight: '2px'
             }}
           >
             My Appointments
@@ -167,7 +205,7 @@ export default function PatientDashboard() {
             onClick={() => setActiveTab('book')}
             style={{
               padding: '10px 20px',
-              marginRight: '10px',
+              flex: '1',
               background: activeTab === 'book' ? '#0066cc' : '#f0f0f0',
               color: activeTab === 'book' ? 'white' : 'black',
               border: 'none',
@@ -176,19 +214,6 @@ export default function PatientDashboard() {
             }}
           >
             Book Appointment
-          </button>
-          <button
-            onClick={() => setActiveTab('timeline')}
-            style={{
-              padding: '10px 20px',
-              background: activeTab === 'timeline' ? '#0066cc' : '#f0f0f0',
-              color: activeTab === 'timeline' ? 'white' : 'black',
-              border: 'none',
-              cursor: 'pointer',
-              borderRadius: '4px 4px 0 0'
-            }}
-          >
-            Timeline
           </button>
         </div>
 
@@ -333,13 +358,14 @@ export default function PatientDashboard() {
 
                   <div style={{ marginBottom: '15px' }}>
                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                      Preferred Date & Time *
+                      Preferred Date *
                     </label>
                     <input
-                      type="datetime-local"
-                      name="datetime"
-                      value={bookingForm.datetime}
+                      type="date"
+                      name="date"
+                      value={bookingForm.date}
                       onChange={handleBookingChange}
+                      min={new Date().toISOString().split('T')[0]}
                       required
                       style={{
                         width: '100%',
@@ -350,6 +376,72 @@ export default function PatientDashboard() {
                         boxSizing: 'border-box'
                       }}
                     />
+                  </div>
+
+                  <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                      Preferred Time *
+                    </label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <select
+                        name="hour"
+                        value={bookingForm.hour || ''}
+                        onChange={(e) => {
+                          const hour = e.target.value;
+                          setBookingForm(prev => ({ ...prev, hour }));
+                        }}
+                        required
+                        style={{
+                          padding: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc',
+                          fontSize: '14px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value="">Hour</option>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                          <option key={h} value={h.toString().padStart(2, '0')}>{h}</option>
+                        ))}
+                      </select>
+                      <span style={{ fontSize: '18px' }}>:</span>
+                      <select
+                        name="minute"
+                        value={bookingForm.minute || ''}
+                        onChange={(e) => {
+                          const minute = e.target.value;
+                          setBookingForm(prev => ({ ...prev, minute }));
+                        }}
+                        required
+                        style={{
+                          padding: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc',
+                          fontSize: '14px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value="">Min</option>
+                        {['00', '15', '30', '45'].map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                      <select
+                        name="ampm"
+                        value={bookingForm.ampm}
+                        onChange={handleBookingChange}
+                        style={{
+                          padding: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc',
+                          fontSize: '14px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div style={{ marginBottom: '15px' }}>
@@ -394,41 +486,6 @@ export default function PatientDashboard() {
               </div>
             )}
 
-            {/* Timeline Tab */}
-            {activeTab === 'timeline' && (
-              <div>
-                <h3>Recent Activity</h3>
-                {timeline.length === 0 ? (
-                  <p>No timeline events yet.</p>
-                ) : (
-                  <ul style={{ listStyle: 'none', padding: 0 }}>
-                    {timeline.map((ev) => (
-                      <li
-                        key={ev._id || ev.id}
-                        style={{
-                          padding: '12px',
-                          marginBottom: '10px',
-                          background: '#f9f9f9',
-                          borderLeft: '4px solid #0066cc',
-                          borderRadius: '4px'
-                        }}
-                      >
-                        <strong>{ev.title || ev.type || 'Event'}</strong>
-                        <br />
-                        <small style={{ color: '#666' }}>
-                          {ev.date
-                            ? new Date(ev.date).toLocaleString()
-                            : ev.createdAt
-                            ? new Date(ev.createdAt).toLocaleString()
-                            : ''}
-                        </small>
-                        {ev.summary && <p style={{ margin: '5px 0 0 0', fontSize: '14px' }}>{ev.summary}</p>}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
           </>
         )}
       </div>

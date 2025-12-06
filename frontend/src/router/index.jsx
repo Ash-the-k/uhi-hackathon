@@ -6,6 +6,7 @@ import LoginPage from '../pages/Auth/LoginPage';
 const UsersManagementPage = React.lazy(() => import('../pages/Admin/UsersManagementPage').catch(() => ({ default: () => <div>Admin Users (missing)</div> })));
 const AdminAppointmentsPage = React.lazy(() => import('../pages/Admin/AdminAppointments').catch(() => ({ default: () => <div>Admin Appointments (missing)</div> })));
 const DoctorDashboard = React.lazy(() => import('../pages/Doctor/DoctorDashboard').catch(() => ({ default: () => <div>Doctor Dashboard (missing)</div> })));
+const ConsultationPage = React.lazy(() => import('../pages/Doctor/ConsultationPage').catch(() => ({ default: () => <div>Consultation Page (missing)</div> })));
 const PatientDashboard = React.lazy(() => import('../pages/Patient/PatientDashboard').catch(() => ({ default: () => <div>Patient Dashboard (missing)</div> })));
 const StaffDashboard = React.lazy(() => import('../pages/Staff/StaffDashboard').catch(() => ({ default: () => <div>Staff Dashboard (missing)</div> })));
 
@@ -30,6 +31,7 @@ export default function Router() {
 
           <Route element={<RequireAuth role="doctor" />}>
             <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+            <Route path="/doctor/consultation/:appointmentId" element={<ConsultationPage />} />
           </Route>
 
           <Route element={<RequireAuth role="patient" />}>

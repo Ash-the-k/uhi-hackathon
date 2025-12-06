@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import appointmentsApi from '../../api/appointmentsApi';
+import consultationsApi from '../../api/consultationsApi';
 import Navbar from '../../components/layout/Navbar';
 
 export default function DoctorDashboard() {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
@@ -32,9 +35,26 @@ export default function DoctorDashboard() {
     setErr('');
     setSuccessMsg('');
     try {
+      // Start the appointment (update status to ongoing)
       await appointmentsApi.startConsultation(appointmentId);
+      
+      // Get appointment details to get patientId and doctorId
+      const appointmentRes = await appointmentsApi.getById(appointmentId);
+      const appointmentData = appointmentRes.data.appointment;
+      
+      // Create consultation
+      const consultationRes = await consultationsApi.create({
+        patientId: appointmentData.patientId,
+        doctorId: appointmentData.doctorId
+      });
+      
+      const consultationId = consultationRes.data.data._id;
+      
       setSuccessMsg('Consultation started!');
       await fetchAppointments();
+      
+      // Navigate to consultation page with appointment ID and consultation ID
+      navigate(`/doctor/consultation/${appointmentId}?consultationId=${consultationId}`);
     } catch (e) {
       console.error(e);
       setErr(e?.response?.data?.message || 'Failed to start consultation');

@@ -4,6 +4,8 @@
 // - list respects role-based filters and admin query override
 // - verifySoap pushes previous version into history (keeps history)
 const svc = require('./consultations.service');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * List consultations (role-filtered)
@@ -140,4 +142,60 @@ async function verifySoap(req, res, next) {
   }
 }
 
-module.exports = { list, getById, create, verifySoap };
+/**
+ * Upload audio for consultation
+ */
+async function uploadAudio(req, res, next) {
+  try {
+    if (req.user?.role !== 'doctor') {
+      return res.status(403).json({ success: false, message: 'Only doctors can upload audio' });
+    }
+
+    const id = req.params.id;
+    const doc = await svc.getById(id);
+    if (!doc) {
+      return res.status(404).json({ success: false, message: 'Consultation not found' });
+    }
+
+    // Enforce doctor ownership
+    if (String(doc.doctorId) !== String(req.user.doctorId)) {
+      return res.status(403).json({ success: false, message: 'Forbidden: not your consultation' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Audio file is required' });
+    }
+
+    // Rename file to use consultation ID
+    const fileExtension = path.extname(req.file.filename);
+    const newFilename = `audio_${id}${fileExtension}`;
+    const oldPath = req.file.path;
+    const audioUploadDir = path.join(__dirname, '../../uploads/audio');
+    const newPath = path.join(audioUploadDir, newFilename);
+
+    // Delete old audio file if it exists
+    if (doc.audioPath) {
+      const oldAudioPath = path.join(audioUploadDir, path.basename(doc.audioPath));
+      if (fs.existsSync(oldAudioPath)) {
+        try {
+          fs.unlinkSync(oldAudioPath);
+        } catch (err) {
+          console.error('Error deleting old audio file:', err);
+        }
+      }
+    }
+
+    // Rename the new file
+    fs.renameSync(oldPath, newPath);
+
+    // Update consultation with audio path
+    const audioPath = `/uploads/audio/${newFilename}`;
+    const updated = await svc.update(id, { audioPath });
+
+    return res.json({ success: true, data: updated });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+module.exports = { list, getById, create, verifySoap, uploadAudio };
