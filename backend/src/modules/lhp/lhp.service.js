@@ -1,5 +1,6 @@
 // backend/src/modules/lhp/lhp.service.js
 
+const mongoose = require('mongoose');
 const LhpChronicCondition = require('../../db/models/LhpChronicCondition');
 const LhpAllergy = require('../../db/models/LhpAllergy');
 const LhpCurrentMedication = require('../../db/models/LhpCurrentMedication');
@@ -11,7 +12,13 @@ module.exports = {
   async getLhp(patientId, viewer = {}) {
     const { role, patientId: viewerPatientId } = viewer || {};
 
-    const baseFilter = { patientId };
+    // Ensure patientId is converted to ObjectId
+    let patientObjectId = patientId;
+    if (mongoose.Types.ObjectId.isValid(patientId)) {
+      patientObjectId = new mongoose.Types.ObjectId(patientId);
+    }
+
+    const baseFilter = { patientId: patientObjectId };
 
     let statusFilter = {};
 
@@ -140,23 +147,32 @@ module.exports = {
   return doc.toObject();
   },
 
-  async acceptSuggestionAndCreateEntry(suggestionId, actedByUserId) {
+  async acceptSuggestionAndCreateEntry(suggestionId, actedByUserId, editedEntry = null) {
     const suggestion = await LhpSuggestion.findById(suggestionId).lean().exec();
     if (!suggestion) throw new Error('Suggestion not found');
+
+    // Use edited entry if provided, otherwise use original proposedEntry
+    const entryToUse = editedEntry || suggestion.proposedEntry;
+    
+    // Create a modified suggestion object with the entry to use
+    const modifiedSuggestion = {
+      ...suggestion,
+      proposedEntry: entryToUse
+    };
 
     let created;
     switch (suggestion.section) {
       case 'CHRONIC_CONDITION':
-        created = await this.createChronicFromSuggestion(suggestion, actedByUserId);
+        created = await this.createChronicFromSuggestion(modifiedSuggestion, actedByUserId);
         break;
       case 'ALLERGY':
-        created = await this.createAllergyFromSuggestion(suggestion, actedByUserId);
+        created = await this.createAllergyFromSuggestion(modifiedSuggestion, actedByUserId);
         break;
       case 'CURRENT_MED':
-        created = await this.createMedicationFromSuggestion(suggestion, actedByUserId);
+        created = await this.createMedicationFromSuggestion(modifiedSuggestion, actedByUserId);
         break;
       case 'PAST_PROCEDURE':
-        created = await this.createPastProcedureFromSuggestion(suggestion, actedByUserId);
+        created = await this.createPastProcedureFromSuggestion(modifiedSuggestion, actedByUserId);
         break;
       default:
         throw new Error('Unknown suggestion section');

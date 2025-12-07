@@ -3,6 +3,8 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import appointmentsApi from '../../api/appointmentsApi';
 import consultationsApi from '../../api/consultationsApi';
 import Navbar from '../../components/layout/Navbar';
+import LhpCards from '../../components/lhp/LhpCards';
+import LhpSuggestions from '../../components/lhp/LhpSuggestions';
 
 export default function ConsultationPage() {
   const { appointmentId } = useParams();
@@ -24,10 +26,13 @@ export default function ConsultationPage() {
   const [saving, setSaving] = useState(false);
   const [audioSaved, setAudioSaved] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
+  const [generatingSOAP, setGeneratingSOAP] = useState(false);
+  const [generatingSuggestions, setGeneratingSuggestions] = useState(false);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
+  const pollingIntervalRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -41,6 +46,9 @@ export default function ConsultationPage() {
       }
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
+      }
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
       }
     };
   }, [appointmentId]);
@@ -218,7 +226,7 @@ export default function ConsultationPage() {
     setError('');
     setAudioSaved(false);
     try {
-      // Convert blob to file
+      // Convert blob to file - backend will save as .mp3
       const audioFile = new File([audioBlob], `consultation-${consultation._id}-${Date.now()}.webm`, {
         type: 'audio/webm'
       });
@@ -232,6 +240,12 @@ export default function ConsultationPage() {
       // Mark as saved
       setAudioSaved(true);
       setJustSaved(true);
+      
+      // Wait a few seconds before starting SOAP generation (to show audio saved first)
+      setTimeout(() => {
+        // Start polling for transcript and SOAP updates
+        startPollingForUpdates(consultation._id);
+      }, 3000); // 3 second delay
       
       // Reset audio state
       setAudioBlob(null);
@@ -247,6 +261,73 @@ export default function ConsultationPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const startPollingForUpdates = (consultationId) => {
+    // Clear any existing polling
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    setGeneratingSOAP(true);
+    setGeneratingSuggestions(false);
+    
+    let pollCount = 0;
+    const maxPolls = 120; // Poll for up to 10 minutes (5 second intervals)
+    let soapGenerated = false;
+
+    pollingIntervalRef.current = setInterval(async () => {
+      pollCount++;
+      
+      if (pollCount >= maxPolls) {
+        clearInterval(pollingIntervalRef.current);
+        setGeneratingSOAP(false);
+        setGeneratingSuggestions(false);
+        return;
+      }
+
+      try {
+        const consultationRes = await consultationsApi.getById(consultationId);
+        const updatedConsultation = consultationRes.data.data;
+        
+        // Check if transcript or SOAP has been updated
+        const hasTranscript = updatedConsultation.transcript && updatedConsultation.transcript.trim().length > 0;
+        const hasSOAP = updatedConsultation.soap?.current && (
+          updatedConsultation.soap.current.subjective ||
+          updatedConsultation.soap.current.objective ||
+          updatedConsultation.soap.current.assessment ||
+          updatedConsultation.soap.current.plan
+        );
+
+        if (hasTranscript || hasSOAP) {
+          setConsultation(updatedConsultation);
+          
+          // Once SOAP is generated, wait a few seconds then start checking for suggestions
+          if (hasSOAP && !soapGenerated) {
+            soapGenerated = true;
+            setGeneratingSOAP(false);
+            // Wait a few seconds before showing suggestions generation
+            setTimeout(() => {
+              setGeneratingSuggestions(true);
+              console.log('SOAP generated, now waiting for LHP suggestions...');
+            }, 3000); // 3 second delay
+          }
+          
+          // Stop polling once we have both transcript and SOAP
+          // (Suggestions will appear automatically when they're created)
+          if (hasTranscript && hasSOAP && soapGenerated) {
+            // Continue polling for a bit more to catch suggestions, then stop
+            if (pollCount > 20) { // After SOAP is ready, poll for ~2 more minutes for suggestions
+              clearInterval(pollingIntervalRef.current);
+              setGeneratingSuggestions(false);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error polling for updates:', err);
+        // Continue polling even on error
+      }
+    }, 5000); // Poll every 5 seconds
   };
 
   if (loading) {
@@ -351,13 +432,15 @@ export default function ConsultationPage() {
           </div>
         </div>
 
-        {/* LHP Section (Placeholder) */}
-        <div style={{ marginBottom: '20px', padding: '20px', background: '#172033', borderRadius: '8px', minHeight: '150px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '15px', borderBottom: '2px solid #2b3a4a', paddingBottom: '10px' }}>
-            LHP (Life Health Profile)
-          </h3>
-          <p style={{ color: '#999', fontStyle: 'italic' }}>LHP section - to be implemented later</p>
-        </div>
+        {/* LHP Section - Right after Patient/Doctor Details */}
+        {(patient?._id || appointment?.patientId) && (
+          <div style={{ marginBottom: '20px' }}>
+            <h3 style={{ color: '#fff', marginBottom: '15px', borderBottom: '2px solid #2b3a4a', paddingBottom: '10px' }}>
+              LHP (Longitudinal Health Profile)
+            </h3>
+            <LhpCards patientId={patient?._id || appointment?.patientId} />
+          </div>
+        )}
 
         {/* Audio Recording Section */}
         <div style={{ padding: '20px', background: '#172033', borderRadius: '8px' }}>
@@ -479,6 +562,140 @@ export default function ConsultationPage() {
             )}
           </div>
         </div>
+
+        {/* SOAP Section - Below Audio */}
+        <div style={{ marginTop: '20px', padding: '20px', background: '#172033', borderRadius: '8px' }}>
+          <h3 style={{ color: '#fff', marginBottom: '15px', borderBottom: '2px solid #2b3a4a', paddingBottom: '10px' }}>
+            SOAP Notes
+          </h3>
+          
+          {generatingSOAP && (
+            <div style={{ 
+              padding: '30px', 
+              background: '#1a2332', 
+              borderRadius: '8px', 
+              border: '1px solid #2b3a4a',
+              textAlign: 'center'
+            }}>
+              <div style={{ color: '#17a2b8', fontSize: '18px', marginBottom: '10px', fontWeight: 'bold' }}>
+                🔄 Generating SOAP from audio...
+              </div>
+              <div style={{ color: '#999', fontSize: '14px' }}>
+                This may take a few minutes. Please wait...
+              </div>
+            </div>
+          )}
+
+          {!generatingSOAP && consultation?.soap?.current && (
+            <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', border: '1px solid #2b3a4a' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+                <div>
+                  <h4 style={{ color: '#17a2b8', marginBottom: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    Subjective (S)
+                  </h4>
+                  <div style={{ 
+                    padding: '15px', 
+                    background: '#172033', 
+                    borderRadius: '6px', 
+                    color: '#ddd', 
+                    fontSize: '14px',
+                    minHeight: '80px',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {consultation.soap.current.subjective || 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 style={{ color: '#28a745', marginBottom: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    Objective (O)
+                  </h4>
+                  <div style={{ 
+                    padding: '15px', 
+                    background: '#172033', 
+                    borderRadius: '6px', 
+                    color: '#ddd', 
+                    fontSize: '14px',
+                    minHeight: '80px',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {consultation.soap.current.objective || 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 style={{ color: '#ffc107', marginBottom: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    Assessment (A)
+                  </h4>
+                  <div style={{ 
+                    padding: '15px', 
+                    background: '#172033', 
+                    borderRadius: '6px', 
+                    color: '#ddd', 
+                    fontSize: '14px',
+                    minHeight: '80px',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {consultation.soap.current.assessment || 'N/A'}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 style={{ color: '#dc3545', marginBottom: '10px', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    Plan (P)
+                  </h4>
+                  <div style={{ 
+                    padding: '15px', 
+                    background: '#172033', 
+                    borderRadius: '6px', 
+                    color: '#ddd', 
+                    fontSize: '14px',
+                    minHeight: '80px',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {consultation.soap.current.plan || 'N/A'}
+                  </div>
+                </div>
+              </div>
+              
+              {consultation.soap.current.editedAt && (
+                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #2b3a4a', color: '#999', fontSize: '12px' }}>
+                  Generated: {new Date(consultation.soap.current.editedAt).toLocaleString()}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!generatingSOAP && !consultation?.soap?.current && (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#999', fontStyle: 'italic' }}>
+              SOAP notes will appear here after audio is processed
+            </div>
+          )}
+        </div>
+
+        {/* LHP Suggestions Section - Below SOAP */}
+        {(patient?._id || appointment?.patientId) && (
+          <div style={{ marginTop: '20px' }}>
+            {generatingSuggestions && !generatingSOAP && (
+              <div style={{ 
+                padding: '20px', 
+                background: '#172033', 
+                borderRadius: '8px', 
+                border: '1px solid #2b3a4a',
+                textAlign: 'center',
+                marginBottom: '20px'
+              }}>
+                <div style={{ color: '#17a2b8', fontSize: '16px', marginBottom: '10px', fontWeight: 'bold' }}>
+                  🤖 Generating LHP Suggestions from SOAP...
+                </div>
+                <div style={{ color: '#999', fontSize: '12px' }}>
+                  Analyzing consultation data. This may take a few minutes.
+                </div>
+              </div>
+            )}
+            {!generatingSOAP && <LhpSuggestions patientId={patient?._id || appointment?.patientId} />}
+          </div>
+        )}
       </div>
     </div>
   );

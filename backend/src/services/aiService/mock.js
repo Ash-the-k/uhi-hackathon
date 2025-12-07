@@ -27,8 +27,34 @@ async function extractMeds(imagePath) {
 }
 
 async function generateLhpSuggestionsFromConsultation(consultation) {
+  // Simulate processing time (2 seconds)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
   const obj = read('mock_lhp_suggestions.json');
-  return obj.suggestions || [];
+  // Handle both formats: array or object with suggestions key
+  let suggestions = [];
+  if (Array.isArray(obj)) {
+    suggestions = obj;
+  } else if (obj && obj.suggestions) {
+    suggestions = obj.suggestions;
+  }
+  
+  // Map suggestions to use the actual consultation's patientId, doctorId, and consultationId
+  // Also ensure section names match the enum (CURRENT_MED vs CURRENT_MEDICATION)
+  return suggestions.map(s => {
+    let section = s.section;
+    // Normalize section names
+    if (section === 'CURRENT_MEDICATION') section = 'CURRENT_MED';
+    
+    return {
+      section: section,
+      proposedEntry: s.proposedEntry || s,
+      // Use consultation's actual IDs
+      patientId: consultation.patientId,
+      doctorId: consultation.doctorId,
+      sourceEventId: consultation._id || consultation.id
+    };
+  });
 }
 
 module.exports = {

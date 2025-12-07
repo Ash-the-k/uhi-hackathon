@@ -60,7 +60,7 @@ async function actOnSuggestion(req, res, next) {
     }
 
     const suggestionId = req.params.id;
-    const { action } = req.body; // 'accept' or 'reject'
+    const { action, editedEntry } = req.body; // 'accept' or 'reject', optional editedEntry
 
     if (!['accept', 'reject'].includes(action)) {
       return res.status(400).json({
@@ -103,9 +103,11 @@ async function actOnSuggestion(req, res, next) {
     }
 
     // ✅ Accept → create entry + mark suggestion accepted
+    // If editedEntry is provided, use it instead of the original proposedEntry
     const createdEntry = await svc.acceptSuggestionAndCreateEntry(
       suggestionId,
-      req.user.userId
+      req.user.userId,
+      editedEntry // Pass edited entry if provided
     );
     return res.json({ success: true, data: createdEntry });
   } catch (err) {

@@ -218,8 +218,8 @@ async function uploadAudio(req, res, next) {
     if (!req.file)
       return res.status(400).json({ success: false, message: 'Audio file is required' });
 
-    const fileExt = path.extname(req.file.filename);
-    const newFilename = `audio_${id}${fileExt}`;
+    // Always save as .mp3 (convert extension)
+    const newFilename = `audio_${id}.mp3`;
 
     const audioDir = path.join(__dirname, '../../uploads/audio');
     const oldPath = req.file.path;
@@ -235,14 +235,84 @@ async function uploadAudio(req, res, next) {
       }
     }
 
+    // Rename file (if it was webm, we're just changing extension - proper conversion would need ffmpeg)
     fs.renameSync(oldPath, newPath);
 
     const audioPath = `/uploads/audio/${newFilename}`;
     const updated = await svc.update(id, { audioPath });
 
+    // Trigger async transcript and SOAP generation
+    // Don't await - let it run in background
+    processAudioAndGenerateSOAP(id, audioPath).catch(err => {
+      console.error('Error processing audio/transcript/SOAP:', err);
+    });
+
     return res.json({ success: true, data: updated });
   } catch (err) {
     return next(err);
+  }
+}
+
+/* -----------------------------------------------
+ * Process audio: transcript → SOAP → LHP Suggestions (async)
+ * ---------------------------------------------*/
+async function processAudioAndGenerateSOAP(consultationId, audioPath) {
+  try {
+    const aiService = require('../../services/aiService/mock');
+    const lhpService = require('../lhp/lhp.service');
+    const fullAudioPath = path.join(__dirname, '../../', audioPath);
+
+    // Step 1: Transcribe audio
+    console.log(`[Consultation ${consultationId}] Starting transcription...`);
+    const transcript = await aiService.transcribeAudio(fullAudioPath);
+    
+    // Step 2: Update consultation with transcript
+    await svc.update(consultationId, { transcript });
+    console.log(`[Consultation ${consultationId}] Transcript updated`);
+
+    // Step 3: Generate SOAP from transcript
+    console.log(`[Consultation ${consultationId}] Generating SOAP...`);
+    const soapData = await aiService.generateSOAP(transcript);
+    
+    // Step 4: Update consultation with SOAP (using PATCH - no history push)
+    if (soapData && (soapData.subjective || soapData.objective || soapData.assessment || soapData.plan)) {
+      await svc.update(consultationId, { soap: soapData });
+      console.log(`[Consultation ${consultationId}] SOAP generated and updated`);
+    }
+
+    // Step 5: Get updated consultation with SOAP
+    const updatedConsultation = await svc.getById(consultationId);
+    
+    // Step 6: Wait a few seconds before generating LHP Suggestions (gap between SOAP and suggestions)
+    console.log(`[Consultation ${consultationId}] Waiting before generating LHP Suggestions...`);
+    await new Promise(resolve => setTimeout(resolve, 3000)); // 3 second delay
+    
+    // Step 7: Generate LHP Suggestions from consultation (after SOAP is ready)
+    console.log(`[Consultation ${consultationId}] Generating LHP Suggestions...`);
+    const suggestions = await aiService.generateLhpSuggestionsFromConsultation(updatedConsultation);
+    
+    // Step 8: Create LHP suggestions in database
+    if (suggestions && Array.isArray(suggestions) && suggestions.length > 0) {
+      for (const suggestion of suggestions) {
+        try {
+          await lhpService.createSuggestion({
+            patientId: suggestion.patientId || updatedConsultation.patientId,
+            doctorId: suggestion.doctorId || updatedConsultation.doctorId,
+            sourceType: 'CONSULTATION',
+            sourceEventId: suggestion.sourceEventId || consultationId,
+            section: suggestion.section,
+            proposedEntry: suggestion.proposedEntry,
+            status: 'PENDING'
+          });
+        } catch (suggestionErr) {
+          console.error(`[Consultation ${consultationId}] Error creating suggestion:`, suggestionErr);
+        }
+      }
+      console.log(`[Consultation ${consultationId}] Created ${suggestions.length} LHP suggestions`);
+    }
+  } catch (err) {
+    console.error(`[Consultation ${consultationId}] Error in processAudioAndGenerateSOAP:`, err);
+    throw err;
   }
 }
 
